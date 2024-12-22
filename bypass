@@ -1,9 +1,8 @@
 local getinfo = getinfo or debug.getinfo
-local DEBUG = false
 local Hooked = {}
 local Detected, Kill
 
-setthreadidentity(2)
+setidentity(2)
 
 for i, v in getgc(true) do
     if typeof(v) == "table" then
@@ -13,9 +12,6 @@ for i, v in getgc(true) do
             Detected = DetectFunc
             local Old; Old = hookfunction(Detected, function(Action, Info, NoCrash)
                 if Action ~= "_" then
-                    if DEBUG then
-                        warn(`Adonis AntiCheat flagged\nMethod: {Action}\nInfo: {Info}`)
-                    end
                 end
                 
                 return true
@@ -26,9 +22,6 @@ for i, v in getgc(true) do
         if rawget(v, "Variables") and rawget(v, "Process") and typeof(KillFunc) == "function" and not Kill then
             Kill = KillFunc
             local Old; Old = hookfunction(Kill, function(Info)
-                if DEBUG then
-                    warn(`Adonis AntiCheat tried to kill (fallback): {Info}`)
-                end
             end)
             table.insert(Hooked, Kill)
         end
@@ -38,13 +31,10 @@ end
 local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
     local LevelOrFunc, Info = ...
     if Detected and LevelOrFunc == Detected then
-        if DEBUG then
-            warn(`Adonis AntiCheat sanity check detected and broken`)
-        end
         return coroutine.yield(coroutine.running())
     end
     return Old(...)
 end))
 
-setthreadidentity(8)
+setidentity(8)
 
