@@ -35,6 +35,3 @@ local Old; Old = hookfunction(getrenv().debug.info, newcclosure(function(...)
     end
     return Old(...)
 end))
-
-setidentity(8)
-
