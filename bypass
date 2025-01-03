@@ -1,4 +1,3 @@
-local getinfo = getinfo or debug.getinfo
 local Hooked = {}
 local Detected, Kill
 
